@@ -2,7 +2,7 @@ import argparse
 import csv
 
 
-def load(path):
+def load_rows(path):
     with open(path, newline="", encoding="utf-8-sig") as source:
         return list(csv.DictReader(source))
 
@@ -17,7 +17,10 @@ def summarize(rows):
 
 
 def top_region(totals):
-    raise NotImplementedError("Complete this helper in GH3.")
+    if not totals:
+        return None
+    region = min(totals, key=lambda name: (-totals[name], name))
+    return region, totals[region]
 
 
 def main():
@@ -25,12 +28,15 @@ def main():
     parser.add_argument("path", help="Path to the sales CSV")
     args = parser.parse_args()
     try:
-        totals, average = summarize(load(args.path))
+        rows = load_rows(args.path)
+        totals, average = summarize(rows)
     except (OSError, ValueError) as error:
         parser.exit(2, f"Error: {error}\n")
     for region, amount in sorted(totals.items()):
         print(f"{region}: {amount:.2f}")
     print(f"Average per region: {average:.2f}")
+    top_region_name, top_region_amount = top_region(totals)
+    print(f"Top region: {top_region_name} ({top_region_amount:.2f})")
 
 
 if __name__ == "__main__":
