@@ -17,6 +17,11 @@ def test_totals_by_region():
     assert totals == {"East": 150.0, "West": 250.0, "North": 75.0}
 
 
+def test_average_is_mean_of_regional_totals():
+    _, average = summarize(load(DATA / "sales.csv"))
+    assert average == 475 / 3
+
+
 def test_top_region():
     assert top_region({"East": 150.0, "West": 250.0}) == ("West", 250.0)
 
